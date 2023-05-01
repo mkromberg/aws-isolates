@@ -1,0 +1,4 @@
+ r←TaskList
+⍝ --- List Task Definitions ---
+ r←SH'aws ecs register-task-definition --output json --cli-input-yaml file://',file
+ ⎕NDELETE file

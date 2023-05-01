@@ -1,0 +1,64 @@
+ VEROTUS23;ATVAH;ETVAH;VT;PVAH;EVVAH;TTVAH;APU0;KUNN0;SVHTY0;SVHSE0;SVHEL0;KIRK0;SUM0;KUNN;SVHTY;SVHEL;SVHSE;KIRK;oV;oV2;EVERO
+⍝ Lasketaan verotus
+
+⍝ Ansiotulovähennys
+ ATVAH←0⌈(¯0.01×ANLP×0⌈AT-ANLR)+AN⌊+/0.01×ANP×[2]((¯2-/ANR),⌊/⍬)⌊[2]0⌈(PT+YT)∘.-ANR
+
+⍝ Eläketulovähennys
+ ETVAH←0⌈ET⌊EL-EL⌊+/0.01×ELLP×[2]((¯2-/ELLR),⌊/⍬)⌊[2]0⌈AT∘.-ELLR
+
+⍝ Puhtaat ansiotulot maksujen ja ansiotulo- ja eläketulovähennysten jälkeen
+ APU0←0⌈AT-(TEM+TTM+PSH+PSHY+ATVAH+ETVAH)
+
+⍝ Perusvähennys
+ PVAH←APU0⌊0⌈PE+¯0.01×PELP×APU0-PE
+
+⍝ Verotettava tulo
+ VT←APU0-PVAH
+
+⍝ Valtionvero
+ oV←VVERO VT
+
+⍝ Eläkeläisen lisävero
+ EVERO←0⌈0.01×ELISP×ET-ELISR
+
+⍝ Elatusvelvollisuusvähennys
+ EVVAH←(LL[3])×EV⌊EP÷8
+
+⍝ Työtulovähennys
+ TTVAH←0⌈(TT⌊0.01×TTP×(PT+YT))-TT⌊+/0.01×TTLP×[2]((¯2-/TTLR),⌊/⍬)⌊[2]0⌈AT∘.-TTLR
+
+⍝ Valtionveron aputieto työtulovähennyksen jälkeen
+⍝ Jos tämä on negatiivinen, niin vähennys jaetaan myöhemmin kunnallisveron, sv:n hoitomaksun ja kirkollisveron välillä
+ oV2←(oV+EVERO)-TTVAH
+
+⍝ Valtionvero
+ APU2←0⌈(oV+EVERO)-(EVVAH+TTVAH)
+
+⍝ Kunnallisvero ennen työtulovähennystä
+ KUNN0←0.01×PKU×VT
+
+⍝ Sairausvakuutuksen hoitomaksu ennen työtulovähennystä
+ SVHTY0←0.01×PSA[1]×VT                    ⍝ Työtulosta
+ SVHEL0←0⌈0.01×(PSA[2]-PSA[1])×VT-(PT+YT) ⍝ Eläkkeestä
+ SVHSE0←0.01×PSA[2]×SE                    ⍝ Sosiaalietuuksista
+
+⍝ Kirkollisvero ennen työtulovähennystä
+ KIRK0←0.01×PKI×VT
+
+⍝ Aputiedoksi ennen työtulovähennystä olevien erien summa
+ SUM0←KUNN0+SVHTY0+SVHEL0+SVHSE0+KIRK0
+
+⍝ Kunnallisvero työtulovähennyksen jälkeen
+ KUNN←0⌈KUNN0+0⌊oV2×KUNN0 NJAKO SUM0
+
+⍝ Sairausvakuutuksen hoitomaksu työtulovähennyksen jälkeen
+ SVHTY←0⌈SVHTY0+0⌊oV2×SVHTY0 NJAKO SUM0    ⍝ Työtulosta
+ SVHEL←0⌈SVHEL0+0⌊oV2×SVHEL0 NJAKO SUM0    ⍝ Eläkkeestä
+ SVHSE←0⌈SVHSE0+0⌊oV2×SVHSE0 NJAKO SUM0    ⍝ Sosiaalietuuksista
+
+⍝ Kirkollisvero työtulovähennyksen jälkeen
+ KIRK←0⌈KIRK0+0⌊oV2×KIRK0 NJAKO SUM0
+
+⍝ Kunnallisvero, kirkollisvero ja maksut yhteensä
+ APU1←KUNN+KIRK+SVHTY+SVHEL+SVHSE+TTM+TEM+PSH+PSHY

@@ -1,0 +1,31 @@
+ r←TaskRegister;td;cd
+⍝ --- Register a Task Definition ---
+⍝ According to ChatGPT:
+⍝ aws ecs register-task-definition --family my-task-definition
+⍝       --container-definitions '[{"name":"my-container","image":"my-docker-image:latest",
+⍝                                 "portMappings":[{"containerPort":80,"protocol":"tcp"}],
+⍝                                 "environment":[{"name":"MY_VAR","value":"my-value"}],
+⍝                                 "essential":true}]'
+
+ (ports←⎕NS¨'' '').(containerPort protocol)←(4502 'tcp')(7052 'tcp') ⍝ RIDE & Isolate ports
+ (env←⎕NS'').(name value)←'RIDE_INIT' 'SERVE:*:4502'
+ td←⎕NS''
+ cd←⎕NS''
+ cd.essential←⊂'true'
+ cd.name←'taxmodel'
+⍝ AWS_USER←'arn:aws:iam::352645159704:user/taxmodel-user'
+ cd.image←AWS_USER,'/taxmodel'
+ cd.portMappings←ports
+ cd.environment←,env
+ cd.(memory memoryReservation)←2000 100
+
+ td.(family containerDefinitions)←'taxmodel'(,cd)
+ td.requiresCompatibilities←,⊂'FARGATE'
+ td.networkMode←'awsvpc'
+ td.executionRoleArn←'arn:aws:iam::352645159704:user/sp2'
+ td.(cpu memory)←'512' '3072' ⍝ 0.5 vCPU, 3GB
+
+ td PutJSON file←folder,'td-spec.json'
+
+ r←SH 'aws ecs register-task-definition --output json --cli-input-json file://',file
+ ⎕NDELETE file

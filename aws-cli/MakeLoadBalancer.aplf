@@ -1,0 +1,48 @@
+ MakeLoadBalancer;folder;sg;file;r;ig;z;range;perm;subnets;cmd;gid;dns;name;getstderr;SH;PutJSON
+⍝ Create a "Permanent" Load Balancer and Security Group suitable for fixed IP Phonebook
+
+ folder←'C:\devt\2022-SP2\two-tier\'
+ getstderr←' 2>&1 || echo "PROBLEM:$?"'
+
+ SH←{z←⎕CMD ⍵,getstderr
+   s←(∊z) ⎕SIGNAL ('"PROBLEM:'≡9↑⊃⌽z)/11
+   ∊z}
+ PutJSON←{(⎕JSON⍠'Compact' 0⊢⍺) ⎕NPUT ⍵ 1} ⍝ Pretty-printed, overwrite if file exists
+
+⍝ --- Create a Security Group ---
+ sg←⎕NS''
+ sg.(Description GroupName)←'Phonebook Access' 'Phonebook-dns'
+ sg PutJSON file←folder,'sg-spec.json'
+ r←SH'aws ec2 create-security-group --output json --cli-input-yaml file://',file,getstderr
+ gid←(⎕JSON ∊r).GroupId ⍝ Our new group id
+ ⎕NDELETE file
+ ⎕←'Created Security group "',gid,'"'
+
+⍝ --- Add an "Ingress" for ports 8080-8088 to the security Group ---
+ (range←⎕NS '').(CidrIp Description)←'0.0.0.0/0' 'Allow Jarvis Traffic'
+ (perm←⎕NS '').(FromPort ToPort IpProtocol IpRanges)←8080 8088 'tcp' (,range)
+ ig←⎕NS''
+ ig.GroupId←gid ⍝ The one we just created
+ ig.IpPermissions←,perm
+ ig PutJSON file←folder,'ig-spec.json'
+ r←SH'aws ec2 authorize-security-group-ingress --output json --cli-input-yaml file://',file
+ ⎕NDELETE file
+
+⍝ --- Add an "Ingress" for port 443 (HTTPS) ---
+ perm.(FromPort ToPort)←443 443
+ ig PutJSON file←folder,'ig-spec.json'
+ r←SH'aws ec2 authorize-security-group-ingress --output json --cli-input-yaml file://',file
+ ⎕NDELETE file
+
+⍝ --- Finally, create a load balancer ---
+ subnets←(⎕JSON ∊⎕CMD 'aws ec2 describe-subnets --no-paginate').Subnets.SubnetId
+
+ cmd←'aws elbv2 create-load-balancer --name phonebook-dns '
+ cmd,←' --scheme internet-facing --type application'
+ cmd,←' --security-groups ',gid
+ cmd,←' --subnets',⍕subnets
+
+r←SH cmd
+(name dns)←(⎕JSON ∊r).(⊃LoadBalancers).(LoadBalancerName DNSName)
+⎕←'Created load balancer ',name
+⎕←'   DNSName is ',dns

@@ -1,0 +1,21 @@
+ PERUSTIEDOT23
+ NAI←0         ⍝ Naimisissa vai ei
+ LL←0 0 0      ⍝ Lasten lkm (3-7, muut, elatusapua saavat)
+ ELK←0         ⍝ 0=työssä,1=eläke Y,2=eläke PP
+ INP←0         ⍝ Invaliditeettiprosentti
+⍝ Vähennykset
+ MK←0          ⍝ Omavastuun ylittävät matkakulut
+ JM←0          ⍝ Jäsenmaksut
+ LV←0          ⍝ Muut luonnolliset vähennykset
+ MU←0          ⍝ Ylimääräiset eläkevakuutusmaksut (TyEL automaattisesti)
+ EP←0          ⍝ Elatusvelvollisen maksu euroa/v/lapsi
+⍝ Velat ja korot
+ VELAT←0       ⍝ Velkojen määrä vuoden 1992 lopussa
+ ASKO←0        ⍝ Asunto- ja opintolainojen korot vuoden 1992 lopussa
+ EAKO←0        ⍝ Ensi asunnon ostoon v. 92 jälkeen liittyvät korot
+ TUKO←0        ⍝ Muut asunto-, opinto- ja tulonhankkimiskorot verovuonna
+ MUPO←0        ⍝ Muut pääomatuloihin kohdistuneet menot
+ VET93←0       ⍝ Ylim.korkoväh. varten valt.verotettava tulo v. 93
+⍝ Kunnallis- ja kirkollisveroprosentti
+ PKU←7.38      ⍝ Kunnallisveroprosentti keskimäärin 7,38
+ PKI←0         ⍝ Kirkollisveroprosentti keskimääräinen 1,39 jos halutaan käyttää

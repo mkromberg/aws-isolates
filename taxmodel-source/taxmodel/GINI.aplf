@@ -1,0 +1,12 @@
+ Z←GINI arvot;sum;n;osoittaja
+⍝ ottaa syötteeksi otoksen lukuarvot
+
+⍝ seuraavassa konsistentti (muttei harhaton) estimaattori Gini-kertoimelle
+
+ arvot←arvot[⍋arvot]
+
+ sum←+/arvot
+ n←⍴arvot
+ osoittaja←+/(⍳n)×arvot
+
+ Z←100×1-(2÷(n-1))×(n-(osoittaja÷sum))

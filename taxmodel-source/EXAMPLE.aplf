@@ -1,0 +1,13 @@
+ result←EXAMPLE;net_incomes;first_taxrate;arguments
+
+⍝ Still using migration level 3...
+ ⎕ML←3
+
+⍝ First create synthetic income data for individuals
+⍝ The right argument (number of people) can be varied to make the calculations take longer
+⍝ When using 5 million people, the TAXGINI function takes about 2 seconds per iteration on my machine, so about 80 seconds in total
+ gross_incomes←INCOME_DIST 5000000 ⍝ For more realism, put this gross income data into a component file and use it from there
+
+⍝ Calculate the Gini coefficient from net incomes with different state income tax first bracket tax rates, ranging from 0% to 19% by steps of 0.5%
+ first_taxrate←0.5×(¯1+⍳39)
+ result←first_taxrate,⊃CALCULATE_GINI¨first_taxrate  ⍝ This is the calculation that I would like to distribute to multiple machines

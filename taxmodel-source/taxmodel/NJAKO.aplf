@@ -1,0 +1,4 @@
+ Z←A NJAKO B;R
+ R←(⍴A)⌈⍴B
+ A←R↑A ⋄ B←R↑B
+ Z←(B≠0)×A÷B+B=0

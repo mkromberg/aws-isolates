@@ -1,0 +1,8 @@
+ Init
+⍝ Set up global fns and vars
+
+⍝ aws ecs describe-tasks --cluster my-cluster --service my-service --query 'tasks[*].containers[*].networkInterfaces[*].privateIpv4Address' --output text
+⍝ aws ecs describe-tasks --cluster my-cluster --service my-service --query 'tasks[*].attachments[0].details[?name==`networkInterfaceId`].value' --output text | xargs -I % aws ec2 describe-network-interfaces --network-interface-ids % --query 'NetworkInterfaces[*].Association.PublicIp' --output text
+
+ AWS_USER←'352645159704.dkr.ecr.eu-west-3.amazonaws.com'
+ folder←⎕SE.Link.LaunchDir,'\'

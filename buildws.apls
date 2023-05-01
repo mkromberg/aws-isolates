@@ -1,0 +1,11 @@
+#!/usr/bin/dyalogscript    
+⎕←'.' ⎕WG 'APLVersion'
+⍝ ⎕SE.(⍎⊃2 ⎕FIX 'file://',(2 ⎕NQ # 'GetEnvironment' 'DYALOG'),'/StartupSession.aplf') ⍝ 19.0
+(⎕NS⍬).({}enableSALT⊣⎕CY (2 ⎕NQ '.' 'GetEnvironment' 'Dyalog'),'/ws/salt') ⍝ 18.2
+⎕SE.Link.Import # './taxmodel-source'
+)SAVE ./taxmodel.dws
+⎕←'Press enter...'
+⍞
+
+
+

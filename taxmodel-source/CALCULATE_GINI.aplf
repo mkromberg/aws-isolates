@@ -1,0 +1,3 @@
+ result←CALCULATE_GINI first_taxrate
+
+ result←first_taxrate taxmodel.TAXGINI gross_incomes

@@ -1,0 +1,6 @@
+ Z←VVERO T;I;A
+⍝  Laskee valtionveron vähennysten jälkeen
+ A←+\B,0.01×(¯1↓D)×(1↓R)-¯1↓R     ⍝ Vero alarajalla
+ I←1⌈+/T∘.≥R                      ⍝ Monesko tuloväli
+ Z←A[I]+0.01×D[I]×T-R[I]          ⍝ Vero alarajalla + marginaalivero-% ylitteestä
+ Z←Z×T≥1↑R                        ⍝ Ei veroa, jos alle 1. alarajan

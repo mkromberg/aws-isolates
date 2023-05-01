@@ -1,0 +1,3 @@
+PutJSON←{ ⍝ Pretty-printed, overwrite if file existsPutJSON
+ (⎕JSON⍠'Compact' 0⊢⍺) ⎕NPUT ⍵ 1
+}

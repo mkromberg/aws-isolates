@@ -1,0 +1,3 @@
+ r←ClusterList
+⍝ --- List Clusters ---
+ r←SH'aws ecs list-clusters --no-paginate'

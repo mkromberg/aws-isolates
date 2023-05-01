@@ -1,0 +1,36 @@
+ MakeTaskAndService;ports;env;AWS_USER;folder;getstderr;SH;PutJSON;file;r;cd;td
+⍝ Create a "Permanent" Load Balancer and Security Group suitable for fixed IP Phonebook
+
+⍝ aws ecs describe-tasks --cluster my-cluster --service my-service --query 'tasks[*].containers[*].networkInterfaces[*].privateIpv4Address' --output text
+⍝ aws ecs describe-tasks --cluster my-cluster --service my-service --query 'tasks[*].attachments[0].details[?name==`networkInterfaceId`].value' --output text | xargs -I % aws ec2 describe-network-interfaces --network-interface-ids % --query 'NetworkInterfaces[*].Association.PublicIp' --output text
+
+ AWS_USER←'352645159704.dkr.ecr.eu-west-3.amazonaws.com'
+ folder←'C:\devt\aws-isolates\'
+ getstderr←' 2>&1 || echo "PROBLEM:$?"'
+
+ SH←{z←⎕CMD ⍵,getstderr
+   s←(∊z) ⎕SIGNAL ('"PROBLEM:'≡9↑⊃⌽z)/11
+   ∊z}
+ PutJSON←{(⎕JSON⍠'Compact' 0⊢⍺) ⎕NPUT ⍵ 1} ⍝ Pretty-printed, overwrite if file exists
+
+TaskRegister
+CreateService
+
+⍝ --- Add an "Ingress" for port 443 (HTTPS) ---
+ perm.(FromPort ToPort)←443 443
+ ig PutJSON file←folder,'ig-spec.json'
+ r←SH'aws ec2 authorize-security-group-ingress --output json --cli-input-yaml file://',file
+ ⎕NDELETE file
+
+⍝ --- Finally, create a load balancer ---
+ subnets←(⎕JSON ∊⎕CMD 'aws ec2 describe-subnets --no-paginate').Subnets.SubnetId
+
+ cmd←'aws elbv2 create-load-balancer --name phonebook-dns '
+ cmd,←' --scheme internet-facing --type application'
+ cmd,←' --security-groups ',gid
+ cmd,←' --subnets',⍕subnets
+
+r←SH cmd
+(name dns)←(⎕JSON ∊r).(⊃LoadBalancers).(LoadBalancerName DNSName)
+⎕←'Created load balancer ',name
+⎕←'   DNSName is ',dns

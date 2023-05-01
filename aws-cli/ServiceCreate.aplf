@@ -1,0 +1,3 @@
+ r←ServiceCreate
+⍝ --- Create the Service ---
+ r←SH'aws ecs create-service --cluster "taxmodel" --service-name "taxmodel-service" --task-definition "taxmodel" --desired-count 2 --launch-type="FARGATE"'

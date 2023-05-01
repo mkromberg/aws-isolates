@@ -1,0 +1,7 @@
+ result←first_taxrate TAXGINI data;net_incomes
+
+⍝ Calculate net incomes for everyone with the chosen first bracket tax rate
+ net_incomes←first_taxrate NETTO23mod data
+
+⍝ Calculate the Gini coefficient from net incomes
+ result←GINI net_incomes

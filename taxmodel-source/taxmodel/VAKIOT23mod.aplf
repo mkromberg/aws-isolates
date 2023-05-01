@@ -1,0 +1,43 @@
+ VAKIOT23mod
+⍝ Vakioita ja parametreja
+⍝ VALTIONVEROTUKSEN TAULUKKO
+ B←0                              ⍝ Alimman taulukkotulon veron määrä
+ R←1000×0 19.9 29.7 49 85.8       ⍝ Verotettavan tulon luokat taulukossa
+ D←first_taxrate 19 30.25 34 44   ⍝ Vero-% alarajan ylittävästä tulonosasta
+⍝ ELÄKETULON LISÄVERO
+ ELISR←47000                      ⍝ Eläketulon lisäveron tuloraja
+ ELISP←5.85                       ⍝ Eläketulon lisäveron %
+⍝ YLE-VERO
+ Y←163                            ⍝ YLE-veron maksimi
+ YR←14000                         ⍝ YLE-veron tuloraja
+ YP←2.5                           ⍝ YLE-veron prosentti
+⍝ MUITA PARAMETREJA
+ iND←1805                         ⍝ Kansaneläkeindeksi
+ KEL←0.01×⌊0.5+100×(iND÷1302)×(6342)(5662.08)  ⍝ Kansaneläkkeen täysi määrä
+⍝ VÄHENNYKSET
+ TH←750                           ⍝ Tulonhankkimisvähennyksen maksimi
+ AN←3570                          ⍝ Ansiotulovähennyksen maksimi
+ ANR←1000×2.5 7.23                ⍝ Ansiotulovähennyksen rajat
+ ANP←51 28                        ⍝ Ansiotulovähennyksen %
+ ANLR←14000                       ⍝ Ansiotulovähennyksen leikkausraja
+ ANLP←4.5                         ⍝ Ansiotulovähennyksen leikkaus-%
+ EL←10×⌈0.1×1.173×KEL[1]          ⍝ Eläketulovähennyksen maksimi yksinasuvan täyden kansaneläkkeen perusteella
+ ELLR←EL 22500                    ⍝ Eläketulovähennyksen leikkausrajat
+ ELLP←51 15                       ⍝ Eläketulovähennyksen leikkaus-%
+ PE←3870                          ⍝ Perusvähennyksen maksimi
+ PELP←18                          ⍝ Perusvähennyksen leikkaus-%
+ TTMUU←2030                       ⍝ Työtulovähennyksen tavallinen maksimi
+ TT60←TTMUU+200                   ⍝ Työtulovähennyksen maksimi 60v täyttäneelle
+ TT62←TTMUU+400                   ⍝ Työtulovähennyksen maksimi 62v täyttäneelle
+ TT65←TTMUU+600                   ⍝ Työtulovähennyksen maksimi 65v täyttäneelle
+ TTP←12                           ⍝ Työtulovähennyksen %
+ TTLR←1000×22 70                  ⍝ Työtulovähennyksen leikkausrajat
+ TTLP←2.03 1.21                   ⍝ Työtulovähennyksen leikkaus-%
+ EV←80                            ⍝ Elatusvelvollisuusvähennyksen maksimi
+⍝ MAKSUT
+ PVR←15703                        ⍝ Sairausvakuutuksen päivärahamaksun tuloraja
+ PVP←1.36                         ⍝ Sairausvakuutuksen päivärahamaksu-%
+ PSA←0.6 1.57                     ⍝ Sairausvakuutuksen hoitomaksun % palkansaajalle ja eläkeläiselle
+ TEMP5362←8.65                    ⍝ Työntekijän työeläkevakuutusmaksu-% (53-62v)
+ TEMPMUU←7.15                     ⍝ Työntekijän työeläkevakuutusmaksu-% (muut)
+ TTMP←1.5                         ⍝ Työntekijän työttömyysvakuutusmaksu-%

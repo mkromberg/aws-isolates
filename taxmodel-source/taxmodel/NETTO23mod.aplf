@@ -1,0 +1,34 @@
+ Z←{first_taxrate}NETTO23mod tULOT;VEROIKA;B;D;iND;kVAH;oV;oV2;vVAH;AN;ANLP;ANLR;ANP;ANR;ASKO;AT;EAKO;EL;ELISP;ELISR;ELLP;ELLR;ELK;ELM1;ELM2;EP;ET;EV;INP;IV;J;JM;KEL;KK;KKV;LA;LL;LV;MK;MU;MUPO;NAI;PE;PELP;PIV;PKI;PKU;PSA;PSH;PSHY;PT;PVP;PVR;R;SE;TEM;TEMP5362;TEMPMUU;TH;TL;TTMUU;TT;TT60;TT62;TT65;TTLP;TTLR;TTM;TTP;TTMP;TUKO;V1;V2;VAV;VELAT;VET93;VVV;YKS;YLE;Y;YP;YR;YT;APU1;APU2
+ ⍝ Verojenlaskentasovelluksen pääohjelma. Sovellus laskee palkan- tai eläkkeensaajan, yrittäjän tai sosiaalietuuksien
+ ⍝ saajan nettotulojen määrän verotuksen jälkeen.
+ ⍝ Oikeana syöttötietona annetaan vastaavat bruttotulot, eli:
+ ⍝ palkkatulo eläketulo yrittäjätulo sosiaalietuudet
+ ⍝ Vasempana valinnaisena argumenttina henkilön ikä
+ ⎕IO←1
+ ⍝ Muokataan syöttötiedot (=bruttotulot) oikean muotoiseksi vektoriksi
+ tULOT←(⌽¯2↑1 1,⌽⍴tULOT)⍴tULOT
+ tULOT←(⌽4,1↑⍴tULOT)↑tULOT
+
+ ⍝ Oletetaan iäksi 60v
+ VEROIKA←60
+
+ ⍝ Jos tätä ei ole määritelty, annetaan ylimmäksi prosentiksi 12,64 (vuoden 2023 arvo)
+ :If 0=⎕NC'first_taxrate'
+     first_taxrate←12.64
+ :EndIf
+
+ PERUSTIEDOT23       ⍝ Henkilön perustiedot
+ VAKIOT23mod         ⍝ Vakiot ja parametrit
+ MUUTTUJIIN23        ⍝ Sijoitukset muuttujiin
+
+ Z←+/tULOT[;⍳4]
+
+ ⍝ Lasketaan verotus
+ VEROTUS23
+ Z,←APU1,APU2,[1.5]YLE
+
+ ⍝ Nettotulot
+ Z←Z[;1]-+/Z[;2 3 4]
+
+ ⍝ Pyöristys
+ Z←0.01×⌊0.5+100×Z

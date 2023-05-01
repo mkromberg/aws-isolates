@@ -1,0 +1,31 @@
+ MUUTTUJIIN23
+
+ ⍝ Sijoitetaan syöttötietoja, vakioita ja parametreja muuttujiin
+ PT←tULOT[;1]                           ⍝ Palkkatulo
+ ET←tULOT[;2]                           ⍝ Eläketulo
+ YT←tULOT[;3]                           ⍝ Yrittäjätulo
+ SE←tULOT[;4]                           ⍝ Sosiaalietuudet
+ LA←+/LL[1 2]                           ⍝ Lasten lukumäärä
+ YKS←(~NAI)∧LA>0                        ⍝ Itse on yksinhuoltaja
+ TL←PT⌊MK+JM+LV⌈TH⌊PT                   ⍝ Tulonhankkimisvähennys
+ AT←((+/tULOT[;⍳2])-TL)+(+/tULOT[;3 4]) ⍝ Puhtaat ansiotulot
+ TTM←PT×0.01×TTMP                       ⍝ Työttömyysvakuutusmaksu
+ PSH←((PT+YT)≥PVR)×PT×0.01×PVP          ⍝ Päivärahamaksu, jos tulot yli rajan
+ PSHY←((PT+YT)≥PVR)×YT×0.01×PVP         ⍝ Päivärahamaksu yrittäjä, jos tulot yli rajan
+ YLE←((AT>YR)×0.01×YP×(AT-YR))⌊Y        ⍝ YLE-vero
+
+ ⍝ Työntekijän TyEL-maksu iän mukaan
+ TEM←((VEROIKA<53)∨(VEROIKA>62))×PT×0.01×TEMPMUU
+ TEM+←((VEROIKA≥53)∧(VEROIKA≤62))×PT×0.01×TEMP5362
+
+ ⍝ Työtulovähennyksen maksimi iän mukaan
+ TT←(VEROIKA<60)×TTMUU
+ TT+←((VEROIKA≥60)∧(VEROIKA≤61))×TT60
+ TT+←((VEROIKA≥62)∧(VEROIKA≤64))×TT62
+ TT+←(VEROIKA≥65)×TT65
+
+ ⍝ Rajoituksia iän mukaan
+ TTM←(VEROIKA<65)×TTM               ⍝ ei työttömyysvakuutusmaksua 65 täyttäneen palkasta
+ PSH←(VEROIKA<68)×PSH               ⍝ ei sv-päivärahamaksua 68v yläikärajan täyttäneille
+ PSHY←(VEROIKA<68)×PSHY             ⍝ sama yrittäjille
+ TEM←(VEROIKA<68)×TEM               ⍝ ei TyEL-maksua yläikärajan täyttäneille (simuloinnissa tämä tehdään funktiossa TEM_IKA)

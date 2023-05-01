@@ -1,0 +1,3 @@
+ r←ClusterCreate name
+⍝ --- Create a Cluster ---
+ r←SH'aws ecs create-cluster --cluster-name ',name

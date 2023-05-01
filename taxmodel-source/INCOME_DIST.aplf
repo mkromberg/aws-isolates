@@ -1,0 +1,7 @@
+ jak←INCOME_DIST n;kkjak
+
+⍝ Approximate the monthly income distribution by a log-normal distribution with parameters 8 and 0.7
+ kkjak←(8 0.7)(16808⌶)'Log Normal'n
+
+⍝ Yearly income from monthly income (do some rounding as well)
+ jak←2(⍎⍕)12×kkjak
