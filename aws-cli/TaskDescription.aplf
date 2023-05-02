@@ -1,0 +1,3 @@
+ r←TaskDescription task
+⍝ --- List Task Definitions ---
+ r←SH'aws ecs describe-task-definition --task-definition ',task

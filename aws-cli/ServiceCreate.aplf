@@ -1,3 +1,4 @@
- r←ServiceCreate
+ r←ServiceCreate;net
 ⍝ --- Create the Service ---
- r←SH'aws ecs create-service --cluster "taxmodel" --service-name "taxmodel-service" --task-definition "taxmodel" --desired-count 2 --launch-type="FARGATE"'
+ net←'--network-configuration "awsvpcConfiguration={subnets=[subnet-cccceda5],securityGroups=[sg-0c32ce61],assignPublicIp=ENABLED}"'
+ r←SH'aws ecs create-service --cluster "taxmodel" --service-name "taxmodel-service" --task-definition "taxmodel" --desired-count 2 --launch-type FARGATE ',net

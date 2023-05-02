@@ -22,7 +22,7 @@
  td.(family containerDefinitions)←'taxmodel'(,cd)
  td.requiresCompatibilities←,⊂'FARGATE'
  td.networkMode←'awsvpc'
- td.executionRoleArn←'arn:aws:iam::352645159704:user/sp2'
+ td.executionRoleArn←'arn:aws:iam::352645159704:role/ecr-isolate'
  td.(cpu memory)←'512' '3072' ⍝ 0.5 vCPU, 3GB
 
  td PutJSON file←folder,'td-spec.json'

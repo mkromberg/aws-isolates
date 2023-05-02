@@ -1,0 +1,3 @@
+ r←TaskDefinitions
+⍝ --- List Task Definitions ---
+ r←SH'aws ecs list-task-definitions'
