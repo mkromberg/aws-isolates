@@ -1,6 +1,6 @@
 caption Progress text
 :If 0=⎕NC 'ProgressForm'
-    'ProgressForm' ⎕WC 'Form' caption ('Coord' 'Pixel')('Size' 300 400)
+    'ProgressForm' ⎕WC 'Form' caption ('Coord' 'Pixel')('Size' 200 300)('Posn' ((1⊃'.' ⎕WG 'DevCaps')-200 300))
     'ProgressForm.Text' ⎕WC 'Text' '' (10 10)
 :EndIf
 

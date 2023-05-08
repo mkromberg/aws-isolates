@@ -1,3 +1,0 @@
-SH←{z←⎕CMD ⍵,' 2>&1 || echo "PROBLEM:$?"'
-  s←(¯12↓∊z) ⎕SIGNAL ('"PROBLEM:'≡9↑⊃⌽z)/11
-  ∊z}

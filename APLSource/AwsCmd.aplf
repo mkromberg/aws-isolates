@@ -1,0 +1,23 @@
+ r←AwsCmd cmd;⎕USING;proc;z;crlf
+ ⎕USING←UsingSystemDiagnostics
+ crlf←⎕UCS 13 10
+
+ proc←⎕NEW Diagnostics.Process
+ proc.StartInfo.FileName←'C:\Program Files\Amazon\AWSCLIV2\aws.exe'
+ proc.StartInfo.Arguments←cmd
+ proc.StartInfo.(RedirectStandardError RedirectStandardOutput)←1 1
+ proc.StartInfo.UseShellExecute←0
+ proc.StartInfo.WindowStyle←2 ⍝ Minimised
+
+ :If proc.Start ⍬
+     r←proc.StandardOutput.ReadToEnd
+
+     :If 0≠≢z←proc.StandardError.ReadToEnd
+         z←(2×crlf≡2↑z)↓z
+         z←(¯2×crlf≡¯2↑z)↓z
+         z ⎕SIGNAL 11
+     :EndIf
+ :Else
+     ⎕←'proc.Start failed'
+     ∘∘∘
+ :EndIf

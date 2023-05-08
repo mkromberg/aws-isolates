@@ -1,0 +1,12 @@
+ r←CreateCluster name;file;cl;folder
+⍝ --- Create a Cluster ---
+
+folder←⎕SE.Link.LaunchDir
+
+ cl←⎕NS''
+ cl.capacityProviders←'FARGATE' 'FARGATE_SPOT'
+ cl PutJSON file←folder,'/cluster-spec.json'
+
+ r←AwsCmd 'ecs create-cluster --cluster-name ',name,' --output json --cli-input-json file://',file
+
+ ⎕NDELETE file

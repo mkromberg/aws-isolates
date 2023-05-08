@@ -1,16 +1,16 @@
- {result}←Demo parallel;net_incomes;first_taxrate;arguments;start;n;iss;ips;Log;z;⎕ML;folder;procs;taxmodelws
+ {result}←Demo parallel;net_incomes;first_taxrate;arguments;start;n;iss;ips;Log;z;⎕ML;folder;procs;taxmodelws;ip
 
  folder←⎕SE.Link.LaunchDir  ⍝ Folder we were started from
  procs←1111⌶⍬               ⍝ Number of processors
  taxmodelws←'/apps/taxmodel/taxmodel.dws'
 
  ⎕ML←3
- :If 0=⎕NC 'isolate'
-     ⎕CY 'isolate.dws'
+ :If 0=⎕NC'isolate'
+     ⎕CY'isolate.dws'
  :EndIf
 
- :If 0=⎕NC 'taxmodel'
-     ⎕SE.Link.Import 'taxmodel' (folder,'/taxmodel-source')
+ :If 0=⎕NC'taxmodel'
+     ⎕SE.Link.Import'taxmodel'(folder,'/taxmodel-source')
  :EndIf
 
  start←2⍴0.001×3⊃⎕AI
@@ -22,7 +22,7 @@
 ⍝ gross_incomes←INCOME_DIST 5000000 ⍝ This is now in a component file
 
  z←isolate.Reset 0
- Log 'Isolate.Reset'
+ Log'Isolate.Reset'
 
 ⍝ Calculate the Gini coefficient from net incomes with different state income tax first bracket tax rates, ranging from 0% to 19% by steps of 0.5%
  first_taxrate←0.5×(¯1+⍳39)
@@ -32,26 +32,36 @@
      ⎕←'Calculation. . . . . . . : Split   93.8, Total:   93.8' ⍝ On Mortens laptop
      →0
      result←first_taxrate,⊃taxmodel.CALCULATE_GINI¨first_taxrate
-     Log 'Calculation'
+     Log'Calculation'
 
  :Case 1 ⍝ ll.EachX
      iss←isolate.New¨3⍴⊂taxmodelws
-     Log 'Init ',(≢iss),' isolates'
-     result←first_taxrate,⊃('CALCULATE_GINI' ll.EachX iss) first_taxrate
-     Log 'Calculation'
+     Log'Init ',(≢iss),' isolates'
+     result←first_taxrate,⊃('CALCULATE_GINI'll.EachX iss)first_taxrate
+     Log'Calculation'
 
  :Case 2 ⍝ AWS Fargate cluster
-     n←10⊣≢first_taxrate
-     Scale'taxmodel2' 'taxmodel-service' n
-     ips←n GetIPs'taxmodel2'
-     Log 'Init ',(⍕n),' Fargate tasks'
-     z←isolate.AddServer¨↓(⍪ips),7052
+     n←≢first_taxrate
+     Scale'taxmodel3' 'taxmodel-big'n
+     ips←n GetIPs'taxmodel3'
+     Log'Init ',(⍕n),' Fargate tasks'
+
+     :For ip :In ips
+         :If 'Unable'≡6↑z←isolate.AddServer ip 7052
+             ⎕←z
+             ∘∘∘
+         :EndIf
+     :EndFor
+
      iss←isolate.New¨n⍴⊂taxmodelws
-     Log 'Init ',(⍕n),' isolates'
-     result←first_taxrate,⊃('CALCULATE_GINI' ll.EachX iss) first_taxrate
-     ⍝ result←first_taxrate,⊃iss.CALCULATE_GINI first_taxrate
-     Log 'Calculation'
-     Scale'taxmodel2' 'taxmodel-service' 0 ⍝ Stop tasks
+     Log'Init ',(⍕n),' isolates'
+     :If n≥≢first_taxrate
+         result←first_taxrate,iss.CALCULATE_GINI first_taxrate
+     :Else ⍝ less isolats than tax rates
+         result←first_taxrate,⊃('CALCULATE_GINI'll.EachX iss)first_taxrate
+     :EndIf
+     Log'Calculation'
+     Scale'taxmodel3' 'taxmodel-big' 0 ⍝ Stop tasks
 
  :Else
      ⎕←'0=single thread, 1=local EachX, 2=AWS Fargate cluster'

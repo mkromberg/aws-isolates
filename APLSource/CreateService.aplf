@@ -1,0 +1,4 @@
+ r←CreateService (cluster service task);net
+⍝ --- Create a Service ---
+ net←'--network-configuration "awsvpcConfiguration={subnets=[subnet-cccceda5],securityGroups=[sg-0c32ce61],assignPublicIp=ENABLED}"' ⍝ Don't ask
+ r←AwsCmd 'ecs create-service --cluster ',cluster,' --service-name ',service,' --task-definition ',task,' --desired-count 0 --launch-type FARGATE ',net

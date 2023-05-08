@@ -1,6 +1,0 @@
- StartProcess;⎕USING;psi
- ⎕USING←UsingSystemDiagnostics
- psi←⎕NEW Diagnostics.ProcessStartInfo,⊂Exe(ws,' ',args)
- psi.WindowStyle←Diagnostics.ProcessWindowStyle.Minimized
- psi.WorkingDirectory←WorkingDir
- Proc←Diagnostics.Process.Start psi

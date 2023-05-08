@@ -1,0 +1,38 @@
+ r←CreateTask (name container rolearn);td;cd;ports;env;mem;cpu;folder;file;image
+⍝ --- Actually "Register" a Task Definition ---
+
+ folder←⎕SE.Link.LaunchDir
+
+ cpu←'2048' ⍝ 2 vCPUs
+ mem←'4096' ⍝ 4Gb
+
+⍝ cpu←'512' ⍝ 0.5 vCPUs
+⍝ mem←'3072' ⍝ 3Gb
+
+ container,←(0=≢container)/'352645159704.dkr.ecr.eu-west-3.amazonaws.com/taxmodel'
+ rolearn,←(0=≢rolearn)/'arn:aws:iam::352645159704:role/taxmodel-role'
+
+ (ports←⎕NS¨'' '' '').(containerPort protocol)←(4502 'tcp')(7052 'tcp')(7053 'tcp') ⍝ RIDE & Isolate ports
+ ⍝ env←⎕NS ''
+ ⍝ env.(name value)←'RIDE_INIT' 'SERVE:*:4502' ; not possible with more than one isolate process
+ td←⎕NS''
+ cd←⎕NS''
+ cd.essential←⊂'true'
+ cd.name←name
+
+
+ cd.image←container
+ cd.portMappings←ports
+ ⍝ cd.environment←,env
+ cd.(memory memoryReservation)←2000 100
+
+ td.(family containerDefinitions)←name(,cd)
+ td.requiresCompatibilities←,⊂'FARGATE'
+ td.networkMode←'awsvpc'
+ td.executionRoleArn←rolearn
+ td.(cpu memory)←cpu mem
+
+ td PutJSON file←folder,'/td-spec.json'
+
+ r←AwsCmd 'ecs register-task-definition --output json --cli-input-json file://',file
+ ⎕NDELETE file

@@ -1,18 +1,18 @@
 r←{desired} GetIPs cluster;⎕ML;tasks;z;arns;nets;t;cmd;all;ProgressForm
 ⎕ML←1
-cmd←'aws ecs list-tasks --cluster ',cluster
+cmd←'ecs list-tasks --cluster ',cluster
 :If all←0=⎕NC 'desired' ⋄ desired←0 ⋄ :EndIf
-:While (~all)∧desired≠≢z.taskArns⊣z←⎕JSON SH cmd
+:While (~all)∧desired≠≢z.taskArns⊣z←⎕JSON AwsCmd cmd
    'Task creation' Progress (⍕≢z.taskArns),' of ',(⍕desired)
    ⎕DL 1
 :EndWhile
 tasks←z.taskArns
 arns←(1-(⌽¨tasks)⍳¨'/')↑¨tasks
-cmd←'aws ecs describe-tasks --cluster taxmodel2 --tasks ',⍕arns
-:While ~∧/(t←z.tasks.lastStatus)∊⊂'RUNNING'⊣z←⎕JSON SH cmd
+cmd←'ecs describe-tasks --cluster ',cluster,' --tasks ',⍕arns
+:While ~∧/(t←z.tasks.lastStatus)∊⊂'RUNNING'⊣z←⎕JSON AwsCmd cmd
    'Task startup' Progress {⍺ (≢⍵)}⌸ t
    ⎕DL 1
 :EndWhile
 nets←z.tasks.attachments.({⊃⍵[⍵[;1]⍳⊂'networkInterfaceId';2]}↑details.(name value))
-z←⎕JSON SH 'aws ec2 describe-network-interfaces --network-interface-ids ',⍕nets
+z←⎕JSON AwsCmd 'ec2 describe-network-interfaces --network-interface-ids ',⍕nets
 r←z.NetworkInterfaces.Association.PublicIp
