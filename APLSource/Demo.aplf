@@ -35,8 +35,8 @@
      Log'Calculation'
 
  :Case 1 ⍝ ll.EachX
-     iss←isolate.New¨3⍴⊂taxmodelws
-     Log'Init ',(≢iss),' isolates'
+     iss←isolate.New¨4⍴⊂taxmodelws
+     Log'Init ',(⍕≢iss),' isolates'
      result←first_taxrate,⊃('CALCULATE_GINI'll.EachX iss)first_taxrate
      Log'Calculation'
 
