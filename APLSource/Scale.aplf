@@ -1,0 +1,18 @@
+{desc}←Scale (cluster service n);⎕ML;desc;dp;done;cmd;z;ProgressForm
+⎕ML←1
+cmd←'aws ecs describe-services --cluster ',cluster,' --services ',service
+desc←(⎕JSON SH cmd).services
+dp←{∊⍵.deployments.(desiredCount pendingCount)}
+:If n=1⊃dp desc ⍝ Not at desired level
+    ⎕←'Scale is already ',⍕n
+:Else
+    ⎕←'Setting scale to ',⍕n
+    z←SH 'aws ecs update-service --cluster ',cluster,' --service ',service,' --desired-count ',⍕n
+    ⎕DL 1
+    :Repeat
+       z←dp desc←⊃(⎕JSON SH cmd).services
+       :If ~done←n=⊃z
+           'Scale' Progress 'desiredCount' 'pendingCount',⍪z
+       :EndIf
+    :Until done
+:EndIf

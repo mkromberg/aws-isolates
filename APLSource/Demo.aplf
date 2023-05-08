@@ -1,0 +1,59 @@
+ {result}←Demo parallel;net_incomes;first_taxrate;arguments;start;n;iss;ips;Log;z;⎕ML;folder;procs;taxmodelws
+
+ folder←⎕SE.Link.LaunchDir  ⍝ Folder we were started from
+ procs←1111⌶⍬               ⍝ Number of processors
+ taxmodelws←'/apps/taxmodel/taxmodel.dws'
+
+ ⎕ML←3
+ :If 0=⎕NC 'isolate'
+     ⎕CY 'isolate.dws'
+ :EndIf
+
+ :If 0=⎕NC 'taxmodel'
+     ⎕SE.Link.Import 'taxmodel' (folder,'/taxmodel-source')
+ :EndIf
+
+ start←2⍴0.001×3⊃⎕AI
+ Log←{now←0.001×3⊃⎕AI ⋄ ⎕←(⍵,(≢⍵)↓25⍴' .'),': Split ',(6 1⍕now-2⊃start),', Total: ',6 1⍕now-1⊃start ⋄ start[2]←now}
+
+⍝ First create synthetic income data for individuals
+⍝ The right argument (number of people) can be varied to make the calculations take longer
+⍝ When using 5 million people, the TAXGINI function takes about 2 seconds per iteration on my machine, so about 80 seconds in total
+⍝ gross_incomes←INCOME_DIST 5000000 ⍝ This is now in a component file
+
+ z←isolate.Reset 0
+ Log 'Isolate.Reset'
+
+⍝ Calculate the Gini coefficient from net incomes with different state income tax first bracket tax rates, ranging from 0% to 19% by steps of 0.5%
+ first_taxrate←0.5×(¯1+⍳39)
+
+ :Select parallel
+ :Case 0 ⍝ Not
+     ⎕←'Calculation. . . . . . . : Split   93.8, Total:   93.8' ⍝ On Mortens laptop
+     →0
+     result←first_taxrate,⊃taxmodel.CALCULATE_GINI¨first_taxrate
+     Log 'Calculation'
+
+ :Case 1 ⍝ ll.EachX
+     iss←isolate.New¨3⍴⊂taxmodelws
+     Log 'Init ',(≢iss),' isolates'
+     result←first_taxrate,⊃('CALCULATE_GINI' ll.EachX iss) first_taxrate
+     Log 'Calculation'
+
+ :Case 2 ⍝ AWS Fargate cluster
+     n←10⊣≢first_taxrate
+     Scale'taxmodel2' 'taxmodel-service' n
+     ips←n GetIPs'taxmodel2'
+     Log 'Init ',(⍕n),' Fargate tasks'
+     z←isolate.AddServer¨↓(⍪ips),7052
+     iss←isolate.New¨n⍴⊂taxmodelws
+     Log 'Init ',(⍕n),' isolates'
+     result←first_taxrate,⊃('CALCULATE_GINI' ll.EachX iss) first_taxrate
+     ⍝ result←first_taxrate,⊃iss.CALCULATE_GINI first_taxrate
+     Log 'Calculation'
+     Scale'taxmodel2' 'taxmodel-service' 0 ⍝ Stop tasks
+
+ :Else
+     ⎕←'0=single thread, 1=local EachX, 2=AWS Fargate cluster'
+
+ :EndSelect

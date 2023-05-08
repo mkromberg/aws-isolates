@@ -1,0 +1,2 @@
+ r←UsingSystemDiagnostics
+ r←(1+IsNetCore)⊃'System,System.dll' 'System,System.Diagnostics.Process'

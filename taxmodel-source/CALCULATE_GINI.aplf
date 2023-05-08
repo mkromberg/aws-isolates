@@ -1,3 +1,7 @@
- result←CALCULATE_GINI first_taxrate
-
+ result←CALCULATE_GINI first_taxrate;tn
+ :If 0=⎕NC 'gross_incomes'
+     tn←'/apps/taxmodel/gross_incomes' ⎕FSTIE 0
+     gross_incomes←⎕FREAD tn 1
+     ⎕FUNTIE tn
+ :EndIf
  result←first_taxrate taxmodel.TAXGINI gross_incomes

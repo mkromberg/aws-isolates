@@ -1,0 +1,2 @@
+r←PrettyJSON json
+r←1 ⎕JSON⍠'Compact' 0⊢0 ⎕JSON json
